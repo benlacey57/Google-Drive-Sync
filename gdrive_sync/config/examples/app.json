@@ -1,0 +1,6 @@
+{
+  "credentials_path": "credentials.json",
+  "token_path": "token.json",
+  "data_dir": "/home/user/.gdrive_sync",
+  "default_exclude_file": ".gdriveignore"
+}
