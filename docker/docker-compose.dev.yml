@@ -1,1 +1,28 @@
+# Development overrides
+services:
+  gdrive-dev:
+    build:
+      target: development
+      cache_from:
+        - gdrive-sync:dev
+    
+    environment:
+      - DEBUG=true
+      - LOG_LEVEL=DEBUG
+    
+    volumes:
+      # Mount source for live editing
+      - ../:/app
+      - gdrive-data:/data
+      - ../config:/config
+    
+    # Port for debugging
+    ports:
+      - "5678:5678"  # debugpy
+    
+    # Override to stay running
+    command: ["bash", "-c", "tail -f /dev/null"]
 
+volumes:
+  gdrive-dev-data:
+    name: gdrive-dev-data
