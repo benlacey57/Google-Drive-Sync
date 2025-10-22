@@ -1,0 +1,17 @@
+{
+  "paths": [
+    "/photos/2024",
+    "/documents/important"
+  ],
+  "destination": "/home/user/GDrive/Downloads",
+  "resume": true,
+  "exclude_patterns": [
+    "*.tmp",
+    "*.cache",
+    ".DS_Store",
+    "Thumbs.db"
+  ],
+  "max_file_size_mb": 0,
+  "convert_google_docs": true,
+  "use_compression": true
+}
