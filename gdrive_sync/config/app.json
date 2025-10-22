@@ -1,0 +1,6 @@
+{
+  "credentials_path": "~/GDrive/credentials.json",
+  "token_path": "~/GDrive/token.json",
+  "data_dir": "~/GDrive/",
+  "default_exclude_file": ".gdriveignore"
+}
