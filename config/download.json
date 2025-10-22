@@ -1,0 +1,9 @@
+{
+  "paths": ["/photos/2024", "/documents"],
+  "destination": "~/GDrive/Downloads",
+  "resume": true,
+  "exclude_patterns": ["*.tmp", ".DS_Store"],
+  "max_file_size_mb": 0,
+  "convert_google_docs": true,
+  "use_compression": true
+}
