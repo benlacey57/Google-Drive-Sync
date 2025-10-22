@@ -11,16 +11,16 @@ help:
 	@echo "  make clean             - Clean temporary files"
 
 test:
-	pytest tests/
+	pytest gdrive_sync/tests/
 
 test-unit:
-	pytest tests/ -m "not integration"
+	pytest gdrive_sync/tests/ -m "not integration"
 
 test-integration:
-	pytest tests/test_integration/
+	pytest gdrive_sync/tests/test_integration/
 
 test-coverage:
-	pytest tests/ --cov=gdrive_sync --cov-report=html --cov-report=term
+	pytest gdrive_sync/tests/ --cov=gdrive_sync --cov-report=html --cov-report=term
 	@echo "Coverage report generated in htmlcov/index.html"
 
 lint:
