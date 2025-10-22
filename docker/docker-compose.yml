@@ -1,1 +1,210 @@
+services:
+  # Main interactive service
+  gdrive-sync:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+      target: production
+    image: gdrive-sync:latest
+    container_name: gdrive-sync
+    hostname: gdrive-sync
+    restart: unless-stopped
+    
+    environment:
+      # Application settings
+      - GDRIVE_DATA_DIR=/data
+      - GDRIVE_CONFIG_DIR=/config
+      - GDRIVE_DOWNLOAD_DIR=/downloads
+      
+      # Locale and timezone
+      - TZ=Europe/London
+      - LANG=en_GB.UTF-8
+      - LC_ALL=en_GB.UTF-8
+      
+      # Python settings
+      - PYTHONUNBUFFERED=1
+      - PYTHONDONTWRITEBYTECODE=1
+    
+    volumes:
+      # Application data (logs, metrics, state)
+      - gdrive-data:/data
+      
+      # Configuration files (read-only recommended)
+      - ../config:/config:ro
+      
+      # Credentials
+      - ../credentials.json:/app/credentials.json:ro
+      - gdrive-token:/app/token
+      
+      # Download destination
+      - gdrive-downloads:/downloads
+      
+      # Optional: Specific upload source
+      # - /path/to/uploads:/uploads:ro
+    
+    networks:
+      - gdrive-network
+    
+    # Resource limits
+    deploy:
+      resources:
+        limits:
+          cpus: '2.0'
+          memory: 2G
+        reservations:
+          cpus: '0.5'
+          memory: 512M
+    
+    # Security options
+    security_opt:
+      - no-new-privileges:true
+    
+    # Read-only root filesystem (except mounted volumes)
+    read_only: false
+    
+    # Capabilities
+    cap_drop:
+      - ALL
+    cap_add:
+      - CHOWN
+      - SETGID
+      - SETUID
+    
+    # Logging
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+        labels: "service,environment"
+    
+    # Labels
+    labels:
+      com.gdrive.sync.service: "main"
+      com.gdrive.sync.environment: "production"
 
+  # Scheduled operations service (cron)
+  gdrive-cron:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+      target: production
+    image: gdrive-sync:latest
+    container_name: gdrive-sync-cron
+    hostname: gdrive-sync-cron
+    restart: unless-stopped
+    
+    environment:
+      - GDRIVE_DATA_DIR=/data
+      - GDRIVE_CONFIG_DIR=/config
+      - GDRIVE_DOWNLOAD_DIR=/downloads
+      - TZ=Europe/London
+      - CRON_ENABLED=true
+      - PYTHONUNBUFFERED=1
+    
+    volumes:
+      - gdrive-data:/data
+      - ../config:/config:ro
+      - ../credentials.json:/app/credentials.json:ro
+      - gdrive-token:/app/token
+      - gdrive-downloads:/downloads
+      - ./crontab:/etc/cron.d/gdrive-sync:ro
+    
+    networks:
+      - gdrive-network
+    
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 1G
+        reservations:
+          cpus: '0.25'
+          memory: 256M
+    
+    security_opt:
+      - no-new-privileges:true
+    
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    
+    labels:
+      com.gdrive.sync.service: "cron"
+      com.gdrive.sync.environment: "production"
+    
+    # Don't start by default
+    profiles:
+      - cron
+
+  # Development service
+  gdrive-dev:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+      target: development
+    image: gdrive-sync:dev
+    container_name: gdrive-sync-dev
+    hostname: gdrive-sync-dev
+    
+    environment:
+      - GDRIVE_DATA_DIR=/data
+      - GDRIVE_CONFIG_DIR=/config
+      - GDRIVE_DOWNLOAD_DIR=/downloads
+      - TZ=Europe/London
+      - PYTHONUNBUFFERED=1
+    
+    volumes:
+      # Mount entire project for development
+      - ../:/app
+      - gdrive-data:/data
+      - ../config:/config
+      - gdrive-downloads:/downloads
+    
+    networks:
+      - gdrive-network
+    
+    # Enable interactive terminal
+    stdin_open: true
+    tty: true
+    
+    command: ["bash"]
+    
+    labels:
+      com.gdrive.sync.service: "development"
+      com.gdrive.sync.environment: "development"
+    
+    # Only start when explicitly requested
+    profiles:
+      - dev
+
+networks:
+  gdrive-network:
+    driver: bridge
+    name: gdrive-network
+    labels:
+      com.gdrive.sync.network: "main"
+
+volumes:
+  gdrive-data:
+    name: gdrive-data
+    driver: local
+    labels:
+      com.gdrive.sync.volume: "data"
+      com.gdrive.sync.description: "Application data, logs, and metrics"
+  
+  gdrive-token:
+    name: gdrive-token
+    driver: local
+    labels:
+      com.gdrive.sync.volume: "token"
+      com.gdrive.sync.description: "OAuth authentication tokens"
+  
+  gdrive-downloads:
+    name: gdrive-downloads
+    driver: local
+    labels:
+      com.gdrive.sync.volume: "downloads"
+      com.gdrive.sync.description: "Downloaded files from Google Drive"
