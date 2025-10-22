@@ -1,8 +1,0 @@
-{
-  "source": "~/Backups",
-  "destination_path": "/backups/",
-  "resume": true,
-  "exclude_patterns": ["node_modules"],
-  "max_file_size_mb": 100,
-  "use_compression": true
-}
