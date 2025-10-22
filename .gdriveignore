@@ -1,0 +1,112 @@
+# Google Drive Sync Exclusion Patterns
+# Lines starting with # are comments
+# Supports wildcards: * (multiple characters) and ? (single character)
+
+# System files
+.DS_Store
+Thumbs.db
+desktop.ini
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+
+# Version control
+.git
+.svn
+.hg
+.gitignore
+.gitattributes
+
+# IDE and editor files
+.idea
+.vscode
+.vs
+*.swp
+*.swo
+*~
+.project
+.settings
+
+# Python
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.so
+*.egg
+*.egg-info
+dist
+build
+.env
+.venv
+venv
+env
+ENV
+
+# Node.js
+node_modules
+npm-debug.log
+yarn-error.log
+yarn-debug.log
+.npm
+.yarn
+
+# Temporary files
+*.tmp
+*.temp
+*.bak
+*.backup
+*.old
+~$*
+
+# Log files
+*.log
+logs
+
+# Cache directories
+.cache
+*.cache
+.sass-cache
+
+# OS generated files
+.directory
+.fuse_hidden*
+
+# Backup files
+*~
+*.bak
+*.swp
+*.swo
+
+# Compiled source
+*.com
+*.class
+*.dll
+*.exe
+*.o
+*.so
+
+# Archives (optional - uncomment if you want to exclude)
+# *.7z
+# *.dmg
+# *.gz
+# *.iso
+# *.jar
+# *.rar
+# *.tar
+# *.zip
+
+# Large media files (optional - uncomment if needed)
+# *.mp4
+# *.avi
+# *.mkv
+# *.mov
+# *.wmv
+# *.flv
+
+# Specific folders to always exclude
+temp
+tmp
+cache
+logs
