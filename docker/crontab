@@ -1,1 +1,32 @@
+# Google Drive Sync - Cron Jobs
+# Format: minute hour day month weekday user command
 
+# Environment variables
+SHELL=/bin/bash
+PATH=/home/gdrive/.local/bin:/usr/local/bin:/usr/bin:/bin
+GDRIVE_DATA_DIR=/data
+GDRIVE_CONFIG_DIR=/config
+
+# Daily backup at 2 AM
+0 2 * * * gdrive cd /app && python main.py --config download --name daily_backup --quiet >> /data/logs/cron.log 2>&1
+
+# Hourly sync during work hours (9 AM - 6 PM, Monday-Friday)
+0 9-18 * * 1-5 gdrive cd /app && python main.py --config sync --name work_sync --quiet >> /data/logs/cron.log 2>&1
+
+# Weekly full sync on Sunday at midnight
+0 0 * * 0 gdrive cd /app && python main.py --config sync --name weekly_full --quiet >> /data/logs/cron.log 2>&1
+
+# Weekly analysis on Sunday at 1 AM
+0 1 * * 0 gdrive cd /app && python main.py --analyse / --export-analysis /data/analysis_$(date +\%Y\%m\%d).json --quiet >> /data/logs/cron.log 2>&1
+
+# Monthly cleanup (first day of month at 3 AM)
+# Remove logs older than 30 days
+0 3 1 * * gdrive find /data/logs -name "*.log" -mtime +30 -delete >> /data/logs/cron.log 2>&1
+
+# Monthly cleanup of old analysis files (keep last 3 months)
+0 3 1 * * gdrive find /data -name "analysis_*.json" -mtime +90 -delete >> /data/logs/cron.log 2>&1
+
+# Health check every 15 minutes (optional)
+*/15 * * * * gdrive /healthcheck.sh >> /data/logs/health.log 2>&1 || echo "Health check failed at $(date)" >> /data/logs/health.log
+
+# Blank line required at end
