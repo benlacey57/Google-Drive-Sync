@@ -1,0 +1,21 @@
+{
+  "paths": [
+    "/work/projects",
+    "/personal/documents"
+  ],
+  "destination": "/home/user/GDrive/Sync",
+  "bidirectional": true,
+  "delete_missing": false,
+  "delete_missing_remote": false,
+  "resume": true,
+  "exclude_patterns": [
+    "*.tmp",
+    "*.cache",
+    ".git",
+    "node_modules",
+    ".DS_Store"
+  ],
+  "max_file_size_mb": 0,
+  "use_compression": true,
+  "convert_google_docs": true
+}
